@@ -1,8 +1,8 @@
-
+# The Rust Books, Abridged
 
 These notes are taken by [Lynn Pepin](https://lynndotpy.xyz/) as personal notes and later reference. There are many abridged Rust texts, and this one is mine.
 
-I abridge [the original work by Steve Klabnik and Carol Nichols, with contributions from the Rust Community](https://doc.rust-lang.org/stable/book/),* with additions from the Cargo book by TODO, the Rust Necronomicon by TODO, and the Rust-by-Example by TODO.
+I abridge [the original work by Steve Klabnik and Carol Nichols, with contributions from the Rust Community](https://doc.rust-lang.org/stable/book/),* with additions from the Cargo book by TODO, the Rust Necronomicon by TODO, and the Rust-by-Example by TODO, and various other sources.
 
 If you have Rustup installed, **you have the full documentation, available offline!** Run `rustup doc` to open the book, `rustup doc --cargo` to open the Cargo book, and `rustup doc -h` to see a full list of available docs.
 
@@ -31,7 +31,7 @@ For further reading
     - [`curl cht.sh/rust/rosetta/:list`](https://cht.sh/rust/rosetta/:list) -- A huge list of 450 Rust example implementations of the [Rosetta Code challenge](https://rosettacode.org/wiki/Category:Rust), for example, [implementing and solving a Maze](https://cht.sh/rust/rosetta/Maze-solving)
 
 
-
+---
 
 # *Prologue* -- Foreward and getting started
 
