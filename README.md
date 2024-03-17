@@ -170,3 +170,112 @@ When it comes time to publish to [crates.io](https://crates.io), you need to do 
 4. Then, set up your project `Cargo.toml` with the `license`, `description`, `homepage`, `documentation`, `repository`, and `readme` fields at minimum.
 
 Keep in mind: A published crate can not be revoked! [Full instructions for publishing to crates.io are here](https://doc.rust-lang.org/cargo/reference/publishing.html)
+
+
+## Programming concepts, reduxed
+
+*Referenced texts: [Programming a Guessing Game](https://doc.rust-lang.org/stable/book/ch02-00-guessing-game-tutorial.html) and [Common Programming Concepts](https://doc.rust-lang.org/stable/book/ch03-00-common-programming-concepts.html) from the Rust book, [Learn X in Y minutes where X=Rust](https://learnxinyminutes.com/docs/rust/), [Rust by Example](https://doc.rust-lang.org/stable/rust-by-example/),  [the Rust Standard Library](https://doc.rust-lang.org/std/) documentation.
+
+> **tldr:** Rust is an **expression oriented language**, where nearly every piece of code is a block which returns something. This is very similar to functional languages.
+> 
+> [Review Rust in Y minutes](https://learnxinyminutes.com/docs/rust/) to get a breakdown of the language.
+> 
+> Rust has no null. Instead, it has `Result<T,E>` with cases `Ok(foo)` and `Err(bar)`, and it has `Option<T>` with cases `Some(foo)` and `None`. These are used extensively, and are the reason you need to `.unwrap()` so many things.
+
+In this section, I'm assuming you already know how to program! **Here are the bare minimums you need to see to start writing your first Rust programs.**
+### Cool new friends, `match`, `Result<T,E>` and `Option<T>`
+
+| Return type                                                             | Case if it works           | Case if it doesn't        |
+| ----------------------------------------------------------------------- | -------------------------- | ------------------------- |
+| [`Result<T, E>`](https://doc.rust-lang.org/std/result/enum.Result.html) | `Ok(foo)` where `foo: T`   | `Err(bar)` where `bar: E` |
+| [`Option<T>`](https://doc.rust-lang.org/std/option/enum.Option.html)    | `Some(foo)` where `foo: T` | `None`                    |
+
+
+Rust has no concept of `null`. Instead, you'll see two common return types `Result<T,E>` and `Option<T>`. Here's an example of `Result<T,E>`, unwrapping, implicit returns, [`match`](https://doc.rust-lang.org/rust-by-example/flow_control/match.html)
+
+```rust
+fn parse_int(string: String) -> Option<i64> {
+  match string.parse::<i64>() {
+    Ok(val) => Some(val),
+    Err(_) => None
+  }
+}
+
+fn main() {
+  println!(
+    "{} {}",
+    parse_int("123".to_string()).unwrap(),
+    parse_int("456".to_string()).unwrap(),
+  )
+}
+```
+
+What's going on here? (Well, these are reference notes. I hope you already know!)
+
+In both cases, if you can assume `something()` returning `Result<T,E>` or `Option<T>` passes, you can `something().unwrap()` to get your `T`. In more detail,
+
+1. `string.parse::<i64>()` is type `Result<T,E>`, where `T` is `i64` and `E` is `ParseIntError`.
+2. `Result<T,E>` is a return type used when something can fail, and we want to pass the error along.
+3. `Ok(val)` is the case for `Result<T,E>` where it succeeds, and `Err(err)` is the case where it fails.
+4. We use underscore `_` in `Err(_)` to ignore the provided error.
+5. `Option<T>` is a return type when something simply might not exist without being in a failure state.
+6. `Some(val)` is the case where `Option<T>` succeeds, and `None` is the case where it fails
+7. The [`println!`](https://doc.rust-lang.org/stable/rust-by-example/hello/print.html) is a standard [macro](https://doc.rust-lang.org/stable/rust-by-example/macros.html). Rust's `macro` system allows the definition of syntactic sugar _within Rust_, to allow for `println!` to take multiple arguments.
+
+This is likely similar to how you already use `null`, but with none of the pitfalls. 
+
+### Write unit tests and doc tests! You don't need to learn a separate framework!
+
+> **tldr:** Rust has a built-in test framework. Doctests and unit tests live alongside source. It is great, and you should use it.
+
+
+
+```rust
+/// Parses a string to an int.
+/// 
+/// Wraps string.parse::<i64>(), providing Option<i64>
+/// rather than Result<i64, ParseIntError>.
+/// 
+/// # Examples. These are executed with `cargo test`!
+/// ```
+/// assert_eq!(123, parse_int("123".to_string()).unwrap());
+/// ```
+
+fn parse_int(string: String) -> Option<i64> {
+  match string.parse::<i64>() {
+    Ok(val) => Some(val),
+    Err(_) => None
+  }
+}
+
+fn main() {
+  println!(
+    "{} {}",
+    parse_int("123".to_string()).unwrap(),
+    parse_int("456".to_string()).unwrap(),
+  )
+}
+
+// These are ALSO executed with `cargo test`!
+#[cfg(test)]
+mod my_cool_tests {
+  // Pull everything in from the source scope
+  use super::*;
+  
+  #[test]
+  fn it_works() {
+    assert_eq!(123, parse_int("123".to_string()).unwrap());
+  }
+  
+  #[test]
+  fn it_breaks() {
+    assert!(parse_int("one hundred".to_string()).is_none());
+  }
+}
+```
+
+
+### Oops, you wanted object oriented programming? Okay, fine,
+
+TODO: I'm basically going to show you my implementation of `Number` here: https://github.com/lynnpepin/phantasm/blob/main/src/number.rs
+
