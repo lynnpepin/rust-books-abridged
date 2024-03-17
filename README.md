@@ -1,14 +1,15 @@
-# The Rust Books, Abridged
 
-These notes are taken by [Lynn Pepin](https://lynndotpy.xyz/) as personal notes and later reference. There are many abridged Rust texts, and this one is mine.
+These notes are taken by [Lynn Pepin](https://lynndotpy.xyz/) as personal notes and reference. There are many abridged Rust texts, and this one is mine. These notes will be expanded _as I learn_. I certainly have no authority to explain Rust's macros, unsafe usage, or adhering to the C ABI.
 
-I abridge [the original work by Steve Klabnik and Carol Nichols, with contributions from the Rust Community](https://doc.rust-lang.org/stable/book/),* with additions from the Cargo book by TODO, the Rust Necronomicon by TODO, and the Rust-by-Example by TODO, and various other sources.
+I "abridge" [the original work by Steve Klabnik and Carol Nichols, with contributions from the Rust Community](https://doc.rust-lang.org/stable/book/),* with additions from [the Cargo book](https://doc.rust-lang.org/cargo/), the [Rust Necronomicon](https://doc.rust-lang.org/nomicon/), [Rust by Example](https://doc.rust-lang.org/rust-by-example/), and more.
 
 If you have Rustup installed, **you have the full documentation, available offline!** Run `rustup doc` to open the book, `rustup doc --cargo` to open the Cargo book, and `rustup doc -h` to see a full list of available docs.
 
-Chapter names are taken from from [the videogame Celeste](https://celeste.ink/wiki/Main_Page). Each chapter will cite the source material with plenty of links for deeper reading. *Celeste fans, consider these links "the B sides".*
+Chapter names are taken from from [the videogame Celeste](https://celeste.ink/wiki/Main_Page). Each chapter will cite the source material with plenty of links for deeper reading :)
 
-For further reading
+
+
+For further reading *(or as Celeste fans call them, the "B sides"*),
 
 - [The Rust Book](https://doc.rust-lang.org/stable/book/) is the golden text, and is available offline with `rustup doc`.
 - There are many other books and official resources:
@@ -29,23 +30,45 @@ For further reading
     - [`curl cht.sh/rust/Types`](https://cht.sh/rust/Types) -- Rust `struct`, `enum`, and `traits`
     - [`curl cht.sh/rust/tests`](https://cht.sh/rust/tests) -- Rust unit tests
     - [`curl cht.sh/rust/rosetta/:list`](https://cht.sh/rust/rosetta/:list) -- A huge list of 450 Rust example implementations of the [Rosetta Code challenge](https://rosettacode.org/wiki/Category:Rust), for example, [implementing and solving a Maze](https://cht.sh/rust/rosetta/Maze-solving)
+- [Aria 'Gankra' Beingessner's blog *Faultlore*](https://faultlore.com/blah/) is an excellent introduction to Rust by someone who was there in front of the train laying down the tracks. She wrote most (all?) of the the Rustonomicon, and her writing style and technical depth is something I can only aspire to. You'll have a good time reading a funny blogpost and suddenly you leave with a technical understanding of something far deeper than you have any idea what to do with. Specifically,
+  - ["C isn't a programming language anymore"](https://faultlore.com/blah/c-isnt-a-language/) illustrates the viscera of Rust's operation from a perspective you won't get while programming it.
+  - ["Why Hashbrown Does A Double-Lookup"](https://faultlore.com/blah/hashbrown-insert/) starts with a re-introduction to a basic datastructure (~~dictionary~~ hashmap my beloved, $\tilde{O}(f(n)) < O(g(n))$ runtime upon me).
+  - Also, she works as CTO at [axo.dev](https://axo.dev/) which makes the *excellent* [`cargo-dist` tool](https://opensource.axo.dev/cargo-dist/).
 
 
----
+If you read this far, you are part of the Rust community. It is now official. Congratulations / condolences! And remember: **Reading is a way for nerds to procrastinate.**
+
+(that's a joke. literacy is good)
 
 # *Prologue* -- Foreward and getting started
+
+> **tldr:** Rust is good, and you can write Rust before you really understand Rust. Trust me. Install Rust with `curl https://sh.rustup.rs -sSf | sh`
+
+## Foreward...
+
+> ***A forward:*** *In lieu of [the original foreward in the original Rust book](https://doc.rust-lang.org/stable/book/foreword.html), I want to explain my motivations behind learning and using Rust.*
+> 
+> 1. Because it's [*fucking awesome*](https://www.smbc-comics.com/index.php?db=comics&id=2088).
+
+If you're here, it's because you already know Rust and need a refresher, or because you're already convinced it's good. I was convinced it was good in 2016, and Rust proved itself when it moved into the Linux kernel in 2022, becoming the only language other than C and inline-assembly, after 32 years.
+
+At this point, Rust is *undeniably well-adopted*. Rust is *too important to die*. It won't suffer the same fate as other cool-new-but-barely-used languages like Ada, Zig, D, or Smalltalk.
+
+When I started using Rust, I was gobsmacked by how good the Cargo tooling was in comparison to every other language. The syntax and borrow-checking was a smaller barrier to entry than, say, compiling a C++ project without Docker, or using pip.
+
+Personally, I look forward to a future where C# and Java are languages only used by strange hobbyists, C and C++ are only written in maintenance, Python finally has a good package managing standard, and Rust is considered a historic, influential, and outdated language, superceded by something *even better*.
+
+If you're here but not on the Rust train, consider [Discord's 2020 adoption](https://discord.com/blog/why-discord-is-switching-from-go-to-rust), [Microsoft's 2020 adoption](https://msrc.microsoft.com/blog/2020/04/the-safety-boat-kubernetes-and-rust/), [Google's 2022 Rust insights](https://opensource.googleblog.com/2023/06/rust-fact-vs-fiction-5-insights-from-googles-rust-journey-2022.html), [Torvalds on Rust in the Linux kernel in 2023](https://www.youtube.com/watch?v=OvuEYtkOH88&t=336s). People are *actually* rewriting important projects in Rust, and not just talking about it! Projects like [the fish shell](https://github.com/fish-shell/fish-shell) after 10 years of C++, [core parts of Windows](https://www.theregister.com/2023/04/27/microsoft_windows_rust/) and [Linux](https://lore.kernel.org/rust-for-linux/20231101-rust-binder-v1-0-08ba9197f637@google.com/), parts of [npm](https://www.rust-lang.org/static/pdfs/Rust-npm-Whitepaper.pdf), [the 1Password package manager](https://blog.1password.com/1passwordx-december-2019-release/), much of the Signal libraries and app, etc.
+
+Personally, I rewrote my [Reso circuit esolang in Rust](https://github.com/resolang/reso) just because pip was too painful, [and I got a 2000000% speed increase](https://lynndotpy.xyz/posts/reso-2023/). 
+
+When I started with Rust, I understood very little of it. Like any other language, you can get through walls when you run into them enough, but you might want to start with small projects to build up an immunity to big projects.
+## ... And getting started.
 
 *Referenced texts: The Foreward, Introduction, and "Getting Started" sections of pThe Rust Book](https://doc.rust-lang.org/stable/book/)*.
 
 > **tldr:** `curl https://sh.rustup.rs -sSf | sh`
 
-> In lieu of [the original foreward in the original Rust book](https://doc.rust-lang.org/stable/book/foreword.html), I want to explain my motivations behind using Rust.
-> 
-> 1. Because it's [*fucking awesome*](https://www.smbc-comics.com/index.php?db=comics&id=2088).
-
-If you're here, it's because you already know Rust and need a refresher, or because you're already convinced it's good. There are other places to learn the virtues of Rust!
-
-Personally, I look forward to a future where C# and Java are languages used by strange hobbyists, Python finally has a good package managing standard, and Rust is superceded by languages which are *even better*.
 
 Here is how to install Rust, and a number of great tools. This assumes you're on MacOS or Linux. (Windows users, figure it out yourself. Sorry!)
 
@@ -278,4 +301,5 @@ mod my_cool_tests {
 ### Oops, you wanted object oriented programming? Okay, fine,
 
 TODO: I'm basically going to show you my implementation of `Number` here: https://github.com/lynnpepin/phantasm/blob/main/src/number.rs
+
 
